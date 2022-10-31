@@ -1,273 +1,223 @@
-import { promises, readFileSync } from 'fs'
+import { promises } from 'fs'
 import { join } from 'path'
 import { xpRange } from '../lib/levelling.js'
 import moment from 'moment-timezone'
 import os from 'os'
 import fs from 'fs'
 import fetch from 'node-fetch'
-const { makeWASocket, BufferJSON, WA_DEFAULT_EPHEMERAL, generateWAMessageFromContent, downloadContentFromMessage, downloadHistory, proto, getMessage, generateWAMessageContent, prepareWAMessageMedia } = (await import('@adiwajshing/baileys')).default
-let emot = `${pickRandom(['⎔', '✦', '⭑', 'ᯬ', '⭔', '◉', '⬟', '▢', '᭻', '»', '〆', '々', '⛥', '✗', '⛊', '⚜', '⚝', '⚚', '♪'])}`
-	
 const defaultMenu = {
-  before: `
-╭─────═[ INFO USER ]═─────⋆
-│╭───────────────···
-┴│☂︎ *Name:* %name
-${emot}│☂︎ *Tag:* %tag
-${emot}│☂︎ *Premium:* %prems
-${emot}│☂︎ *Limit:* %limit
-${emot}│☂︎ *Money:* %money
-${emot}│☂︎ *Role:* %role
-${emot}│☂︎ *Level:* %level [ %xp4levelup Xp For Levelup]
-${emot}│☂︎ *Xp:* %exp / %maxexp
-┬│☂︎ *Total Xp:* %totalexp
-│╰────────────────···
-┠─────═[ TODAY ]═─────⋆
-│╭────────────────···
-┴│    *${ucapan()} %name!*
-${emot}│☂︎ *Tanggal:* %week %weton
-${emot}│☂︎ *Date:* %date
-${emot}│☂︎ *Tanggal Islam:* %dateIslamic
-┬│☂︎ *Waktu:* %time
-│╰────────────────···
-┠─────═[ INFO BOT ]═─────⋆
-│╭────────────────···
-┴│☂︎ *Nama Bot:* %me
-${emot}│☂︎ *Mode:* %mode
-${emot}│☂︎ *Prefix:* [ *%_p* ]
-${emot}│☂︎ *Baileys:* Multi Device
-${emot}│☂︎ *Battery:* ${conn.battery != undefined ? `${conn.battery.value}% ${conn.battery.live ? '🔌 pengisian' : ''}` : 'tidak diketahui'}
-${emot}│☂︎ *Platform:* %platform
-${emot}│☂︎ *Type:* Node.Js
-${emot}│☂︎ *Uptime:* %muptime
-┬│☂︎ *Database:* %rtotalreg dari %totalreg
-│╰────────────────···
-╰──────────═┅═──────────
-
-⃝▣──「 *INFO CMD* 」───⬣
-│ *Ⓟ* = Premium
-│ *Ⓛ* = Limit
-▣────────────⬣
-%readmore
-`.trimStart(),
-  header: '⃝▣──「 %category 」───⬣',
-  body: `${emot} %cmd %isPremium %islimit`,
-  footer: '▣───────────⬣\n',
-  after: `%c4 %me`,
+    before: `
+  ╭─────═[ INFO USER ]═─────⋆
+  │╭───────────────···
+  ┴│☂︎ *Name:* %name
+  ${emot}│☂︎ *Tag:* %tag
+  ${emot}│☂︎ *Premium:* %prems
+  ${emot}│☂︎ *Limit:* %limit
+  ${emot}│☂︎ *Money:* %money
+  ${emot}│☂︎ *Role:* %role
+  ${emot}│☂︎ *Level:* %level [ %xp4levelup Xp For Levelup]
+  ${emot}│☂︎ *Xp:* %exp / %maxexp
+  ┬│☂︎ *Total Xp:* %totalexp
+  │╰────────────────···
+  ┠─────═[ TODAY ]═─────⋆
+  │╭────────────────···
+  ┴│    *${ucapan()} %name!*
+  ${emot}│☂︎ *Tanggal:* %week %weton
+  ${emot}│☂︎ *Date:* %date
+  ${emot}│☂︎ *Tanggal Islam:* %dateIslamic
+  ┬│☂︎ *Waktu:* %time
+  │╰────────────────···
+  ┠─────═[ INFO BOT ]═─────⋆
+  │╭────────────────···
+  ┴│☂︎ *Nama Bot:* %me
+  ${emot}│☂︎ *Mode:* %mode
+  ${emot}│☂︎ *Prefix:* [ *%_p* ]
+  ${emot}│☂︎ *Baileys:* Multi Device
+  ${emot}│☂︎ *Battery:* ${conn.battery != undefined ? `${conn.battery.value}% ${conn.battery.live ? '🔌 pengisian' : ''}` : 'tidak diketahui'}
+  ${emot}│☂︎ *Platform:* %platform
+  ${emot}│☂︎ *Type:* Node.Js
+  ${emot}│☂︎ *Uptime:* %muptime
+  ┬│☂︎ *Database:* %rtotalreg dari %totalreg
+  │╰────────────────···
+  ╰──────────═┅═──────────
+  
+  ⃝▣──「 *INFO CMD* 」───⬣
+  │ *Ⓟ* = Premium
+  │ *Ⓛ* = Limit
+  ▣────────────⬣
+  %readmore
+  `.trimStart(),
+    header: '⃝▣──「 %category 」───⬣',
+    body: `${emot} %cmd %isPremium %islimit`,
+    footer: '▣───────────⬣\n',
+    after: `%c4 %me`,
+  }
+let handler = async (m, { conn, usedPrefix: _p, __dirname, args }) => {
+let tags
+let emot = `${pickRandom(['⎔', '◈▻', '✦', '⭑', 'ᯬ', '⭔', '◉', '⬟', '᭻', '»', '〆', '々', '⛥', '✗', '⛊', '⚜', '⚝', '⚚', '♪'])}`
+let rndom = `${pickRandom(['defaultMenu', 'defmenu1'])}`
+let teks = `${args[0]}`.toLowerCase()
+let arrayMenu = ['all', 'anime', 'update', 'maker', 'berita', 'edukasi', 'news', 'random', 'game', 'xp', 'islamic', 'stiker', 'rpg', 'kerangajaib', 'quotes', 'admin', 'group', 'premium', 'internet', 'anonymous', 'nulis', 'downloader', 'tools', 'fun', 'database","quran', 'vote', 'nsfw', 'audio', 'jadibot', 'info', 'owner', 'nocategory']
+if (!arrayMenu.includes(teks)) teks = '404'
+if (teks == 'all') tags = {
+'main': 'Main',
+'game': 'Game',
+'rpg': 'RPG Games',
+'xp': 'Exp & Limit',
+'sticker': 'Sticker',
+'kerang': 'Kerang Ajaib',
+'quotes': 'Quotes',
+'fun': 'Fun',
+'anime': 'Anime',
+'admin': 'Admin',
+'group': 'Group',
+'vote': 'Voting',
+'absen': 'Absen',
+'premium': 'Premium',
+'anonymous': 'Anonymous Chat',
+'internet': 'Internet',
+'downloader': 'Downloader',
+'tools': 'Tools',
+'nulis': 'MagerNulis & Logo',
+'audio': 'Audio',
+'maker': 'Maker',
+'berita': 'Berita',
+'database': 'Database',
+'quran': 'Al Qur\'an',
+'owner': 'Owner',
+'host': 'Host',
+'advanced': 'Advanced',
+'info': 'Info',
+'': 'No Category',
 }
-let handler = async (m, { conn, usedPrefix: _p, __dirname, args, usedPrefix, command}) => {
-  let imgr = flaaa.getRandom()
-let res = JSON.parse(readFileSync('./json/emoji.json'))
-let em = res.emoji
-	let who = m.mentionedJid && m.mentionedJid[0] ? m.mentionedJid[0] : m.fromMe ? conn.user.jid : m.sender
-	let whmods = await conn.profilePictureUrl(who).catch(_ => hwaifu.getRandom())
-	let tags
-	let teks = `${args[0]}`.toLowerCase()
-  let arrayMenu = ['all', 'anime', 'update', 'maker', 'berita', 'edukasi', 'news', 'random', 'logo', 'menbalas', 'game', 'xp', 'islamic', 'stiker', 'rpg', 'kerangajaib', 'quotes', 'admin', 'group', 'premium', 'internet', 'anonymous', 'nulis', 'downloader', 'tools', 'fun', 'database','quran', 'vote', 'nsfw', 'audio', 'jadibot', 'info', 'owner', 'nocategory']
-  if (!arrayMenu.includes(teks)) teks = '404'
-  if (teks == 'all') tags = {
-  'main': 'Main', 
-  'game': 'Game',
-  'rpg': 'RPG Games',
-  'xp': 'Exp & Limit',
-  'sticker': 'Sticker',
-  'kerang': 'Kerang Ajaib',
-  'quotes': 'Quotes',
-  'fun': 'Fun',
-  'anime': 'Anime',
-  'admin': 'Admin',
-  'group': 'Group',
-  'vote': 'Voting',
-  'absen': 'Absen',
-  'premium': 'Premium',
-  'anonymous': 'Anonymous Chat',
-  'internet': 'Internet',
-  'downloader': 'Downloader',
-  'tools': 'Tools',
-  'nulis': 'MagerNulis & Logo',
-  'audio': 'Audio',
-  'logo': 'Logo Menu',
-  'maker': 'Maker',
-  'berita': 'Berita',
-  'database': 'Database',
-  'quran': 'Al Qur\'an',
-  'owner': 'Owner',
-  'host': 'Host',
-  'advanced': 'Advanced',
-  'info': 'Info',
-  '': 'No Category',
+if (teks == 'game') tags = {
+'game': 'Game'
 }
-  if (teks == 'game') tags = {
-    'game': 'Game'
-  }
-  if (teks == 'anime') tags = {
-    'anime': 'Anime'
-  }
-  if (teks == 'nsfw') tags = {
-    'nsfw': 'Nsfw'
-  }
-  if (teks == 'rpg') tags = {
-    'rpg': 'Rpg'
-  }
-  if (teks == 'edukasi') tags = {
-    'edukasi': 'Edukasi'
-  }
-  if (teks == 'news') tags = {
-    'news': 'News'
-  }
-  if (teks == 'random') tags = {
-    'random': 'Random'
-  }
-  if (teks == 'xp') tags = {
-    'xp': 'Exp & Limit'
-  }
-  if (teks == 'stiker') tags = {
-    'sticker': 'Stiker'
-  }
-  if (teks == 'kerangajaib') tags = {
-    'kerang': 'Kerang Ajaib'
-  }
-  if (teks == 'quotes') tags = {
-    'quotes': 'Quotes'
-  }
-  if (teks == 'berita') tags = {
-    'berita': 'Berita'
-  }
-  if (teks == 'admin') tags = {
-    'admin': `Admin ${global.opts['restrict'] ? '' : '(Dinonaktifkan)'}`,
-    'group': 'Grup'
-  }
-  if (teks == 'group') tags = {
-    'group': 'Group'
-  }
-  if (teks == 'premium') tags = {
-    'premium': 'Premium'
-  }
-  if (teks == 'internet') tags = {
-    'internet': 'Internet'
-  }
-  if (teks == 'anonymous') tags = {
-    'anonymous': 'Anonymous Chat'
-  }
-  if (teks == 'nulis') tags = {
-    'nulis': 'Nulis',
-    'maker': 'Maker'
-  }
-  if (teks == 'downloader') tags = {
-    'downloader': 'Downloader'
-  }
-  if (teks == 'tools') tags = {
-    'tools': 'Tools'
-  }
-if (teks == 'menbalas') tags = {
-    'menbalas': 'Menfess'
-  }
-  if (teks == 'fun') tags = {
-    'fun': 'Fun'
-  }
-  if (teks == 'database') tags = {
-    'database': 'Database'
-  }
-  if (teks == 'vote') tags = {
-    'vote': 'Voting',
-  }
-  if (teks == 'logo') tags = {
-    'logo': 'Logo Menu',
-  }
-  if (teks == 'absen') tags = {
-    'absen': 'Absen'
-  }
-  if (teks == 'quran') tags = {
-    'quran': 'Al-Qur\'an',
-    'islamic': 'Islamic'
-  }
-  if (teks == 'audio') tags = {
-    'audio': 'Audio'
-  }
-  if (teks == 'jadibot') tags = {
-    'jadibot': 'Jadi Bot'
-  }
-  if (teks == 'info') tags = {
-    'info': 'Info'
-  }
-  if (teks == 'owner') tags = {
-    'owner': 'Owner',
-    'host': 'Host',
-    'advanced': 'Advanced'
-  }
+if (teks == 'anime') tags = {
+'anime': 'Anime'
+}
+if (teks == 'nsfw') tags = {
+'nsfw': 'Nsfw'
+}
+if (teks == 'rpg') tags = {
+'rpg': 'Rpg'
+}
+if (teks == 'edukasi') tags = {
+'edukasi': 'Edukasi'
+}
+if (teks == 'news') tags = {
+'news': 'News'
+}
+if (teks == 'random') tags = {
+'random': 'Random'
+}
+if (teks == 'xp') tags = {
+'xp': 'Exp & Limit'
+}
+if (teks == 'stiker') tags = {
+'sticker': 'Stiker'
+}
+if (teks == 'kerangajaib') tags = {
+'kerang': 'Kerang Ajaib'
+}
+if (teks == 'quotes') tags = {
+'quotes': 'Quotes'
+}
+if (teks == 'berita') tags = {
+'berita': 'Berita'
+}
+if (teks == 'admin') tags = {
+'admin': `Admin ${global.opts['restrict'] ? '' : '(Dinonaktifkan)'}`,
+'group': 'Grup'
+}
+if (teks == 'group') tags = {
+'group': 'Group'
+}
+if (teks == 'premium') tags = {
+'premium': 'Premium'
+}
+if (teks == 'internet') tags = {
+'internet': 'Internet'
+}
+if (teks == 'anonymous') tags = {
+'anonymous': 'Anonymous Chat'
+}
+if (teks == 'nulis') tags = {
+'nulis': 'Nulis',
+'maker': 'Maker'
+}
+if (teks == 'downloader') tags = {
+'downloader': 'Downloader'
+}
+if (teks == 'tools') tags = {
+'tools': 'Tools'
+}
+if (teks == 'fun') tags = {
+'fun': 'Fun'
+}
+if (teks == 'database') tags = {
+'database': 'Database'
+}
+if (teks == 'vote') tags = {
+'vote': 'Voting',
+}
+if (teks == 'absen') tags = {
+'absen': 'Absen'
+}
+if (teks == 'quran') tags = {
+'quran': 'Al-Qur\'an',
+'islamic': 'Islamic'
+}
+if (teks == 'audio') tags = {
+'audio': 'Audio'
+}
+if (teks == 'jadibot') tags = {
+'jadibot': 'Jadi Bot'
+}
+if (teks == 'info') tags = {
+'info': 'Info'
+}
+if (teks == 'owner') tags = {
+'owner': 'Owner',
+'host': 'Host',
+'advanced': 'Advanced'
+}
  if (teks == 'nsfw') tags = {
-    'nsfw': 'Nsfw'
-  }
-  if (teks == 'nocategory') tags = {
-    'nocategory': 'No Category'
-  }
-  try {
-  	// DEFAULT MENU
-      let dash = global.dashmenu
-  	let m1 = global.dmenut
-      let m2 = global.dmenub
-      let m3 = global.dmenuf
-      let m4 = global.dmenub2
-      
-      // COMMAND MENU
-      let cc = global.cmenut
-      let c1 = global.cmenuh
-      let c2 = global.cmenub
-      let c3 = global.cmenuf
-      let c4 = global.cmenua
-      
-      // LOGO L P
-      let lprem = global.lopr
-      let llim = global.lolm
-      let tag = `@${m.sender.split('@')[0]}`
-    
-    //-----------TIME---------
-    let ucpn = `${ucapan()}`
-    let d = new Date(new Date + 3600000)
-    let locale = 'id'
-    let week = d.toLocaleDateString(locale, { weekday: 'long' })
-    let date = d.toLocaleDateString(locale, {
-      day: 'numeric',
-      month: 'long',
-      year: 'numeric'
-    })
-    let who = m.mentionedJid && m.mentionedJid[0] ? m.mentionedJid[0] : m.fromMe ? conn.user.jid : m.sender
-    // d.getTimeZoneOffset()
-    // Offset -420 is 18.00
-    // Offset    0 is  0.00
-    // Offset  420 is  7.00
-    let weton = ['Pahing', 'Pon', 'Wage', 'Kliwon', 'Legi'][Math.floor(d / 84600000) % 5]
-    let dateIslamic = Intl.DateTimeFormat(locale + '-TN-u-ca-islamic', {
-      day: 'numeric',
-      month: 'long',
-      year: 'numeric'
-    }).format(d)
-    let time = d.toLocaleTimeString(locale, {
-      hour: 'numeric',
-      minute: 'numeric',
-      second: 'numeric'
-    })
-    let _uptime = process.uptime() * 1000
-    let _muptime
-    if (process.send) {
-      process.send('uptime')
-      _muptime = await new Promise(resolve => {
-        process.once('message', resolve)
-        setTimeout(resolve, 1000)
-      }) * 1000
-    }
-    let muptime = clockString(_muptime)
-    let uptime = clockString(_uptime)
-    let _mpt
-    if (process.send) {
-      process.send('uptime')
-      _mpt = await new Promise(resolve => {
-        process.once('message', resolve)
-        setTimeout(resolve, 1000)
-      }) * 1000
-    }
-    let mpt = clockString(_mpt)
+'nsfw': 'Nsfw'
+}
+if (teks == 'nocategory') tags = {
+'': 'No Category'
 
+
+}
+try {
+// DEFAULT MENU
+let dash = global.dashmenu
+let m1 = global.dmenut
+let m2 = global.dmenub
+let m3 = global.dmenuf
+let m4 = global.dmenub2
+
+// COMMAND MENU
+let cc = global.cmenut
+let c1 = global.cmenuh
+let c2 = global.cmenub
+let c3 = global.cmenuf
+let c4 = global.cmenua
+
+// LOGO L P
+let lprem = global.lopr
+let llim = global.lolm
+let tag = `@${m.sender.split('@')[0]}`
+
+let _mpt
+if (process.send) {
+process.send('uptime')
+_mpt = await new Promise(resolve => {
+process.once('message', resolve)
+setTimeout(resolve, 1000)
+}) * 1000
+}
 let usrs = db.data.users[m.sender]
 
 const sections = [
@@ -360,7 +310,7 @@ let tek = `✧────···[ Dashboard ]···────✧
 │
 ├━━━━━━━━━━━━━━━━┈─⋆
 │
-│ ▸ *Sumber :* YouTube WH-MODS-DEV
+│ ▸ *Sumber :* YouTube LaxirMods
 │ ▸ *ᴀᴜᴛʜᴏʀ :* ${nameown}
 ┴ ▸ *ᴏᴡɴᴇʀ :* ${nameown}
 ✧
@@ -383,10 +333,62 @@ const listMessage = {
   if (teks == '404') {
   	return conn.sendMessage(m.chat, listMessage, { quoted: fakes, mentions: await conn.parseMention(tek), contextInfo:{ forwardingScore: 99999, isForwarded: true }})
     }
-	  
 
-
-
+ /**************************** TIME *********************/
+ let wib = moment.tz('Asia/Jakarta').format('HH:mm:ss')
+let wibh = moment.tz('Asia/Jakarta').format('HH')
+let wibm = moment.tz('Asia/Jakarta').format('mm')
+let wibs = moment.tz('Asia/Jakarta').format('ss')
+let wit = moment.tz('Asia/Jayapura').format('HH:mm:ss')
+let wita = moment.tz('Asia/Makassar').format('HH:mm:ss')
+let wktuwib = `${wibh} H ${wibm} M ${wibs} S`
+ 
+ let mode = global.opts['self'] ? 'Private' : 'Publik'
+let _package = JSON.parse(await promises.readFile(join(__dirname, '../package.json')).catch(_ => ({}))) || {}
+let { age, exp, limit, level, role, registered, money} = global.db.data.users[m.sender]
+let { min, xp, max } = xpRange(level, global.multiplier)
+let name = await conn.getName(m.sender)
+let premium = global.db.data.users[m.sender].premiumTime
+let prems = `${premium > 0 ? 'Premium': 'Free'}`
+let platform = os.platform()
+      let vn = './media/yntkts'
+//-----------TIME---------
+let ucpn = `${ucapan()}`
+let who = m.mentionedJid && m.mentionedJid[0] ? m.mentionedJid[0] : m.fromMe ? conn.user.jid : m.sender
+let d = new Date(new Date + 3600000)
+let locale = 'id'
+// d.getTimeZoneOffset()
+// Offset -420 is 18.00
+// Offset0 is0.00
+// Offset420 is7.00
+let weton = ['Pahing', 'Pon', 'Wage', 'Kliwon', 'Legi'][Math.floor(d / 84600000) % 5]
+let week = d.toLocaleDateString(locale, { weekday: 'long' })
+let date = d.toLocaleDateString(locale, {
+day: 'numeric',
+month: 'long',
+year: 'numeric'
+})
+let dateIslamic = Intl.DateTimeFormat(locale + '-TN-u-ca-islamic', {
+day: 'numeric',
+month: 'long',
+year: 'numeric'
+}).format(d)
+let time = d.toLocaleTimeString(locale, {
+hour: 'numeric',
+minute: 'numeric',
+second: 'numeric'
+})
+let _uptime = process.uptime() * 1000
+let _muptime
+if (process.send) {
+process.send('uptime')
+_muptime = await new Promise(resolve => {
+process.once('message', resolve)
+setTimeout(resolve, 1000)
+}) * 1000
+}
+let muptime = clockString(_muptime)
+let uptime = clockString(_uptime)
 //---------------------
 
 let totalreg = Object.keys(global.db.data.users).length
@@ -519,12 +521,12 @@ ptt: false, seconds: 0,contextInfo: {
     description: 'www.instagram.com/hyuura-official',
     title: "Now Playing...",
     body: wm,
-    thumbnail: await (await fetch('https://telegra.ph/file/35e2ca9f7e23cdc421dec.png')).buffer(),
+    thumbnail: await (await fetch('https://telegra.ph/file/c72133b197a68d3ea514d.jpg')).buffer(),
     sourceUrl: 'www.instagram.com/hyuura-official'
  	  /*   sourceUrl: sig,
            title: '◄⟬ ●━━━ ⧏ ⧎ ⧐ ━━━● ⟭►',  
             body: 'Now Playing...', 
-           thumbnail: await (await fetch('https://telegra.ph/file/35e2ca9f7e23cdc421dec.png')).buffer()
+           thumbnail: await (await fetch('https://telegra.ph/file/c72133b197a68d3ea514d.jpg')).buffer()
 }
      }
     })
@@ -560,17 +562,17 @@ ptt: false, seconds: 0,contextInfo: {
     description: sgc,
     title: "Kᴛɪᴋ .sᴏᴜɴᴅᴍᴇɴᴜ ᴜɴᴛᴋ ʏɢ ʟᴀɪɴ",
     body: wm,
-    thumbnail: await (await fetch('https://telegra.ph/file/35e2ca9f7e23cdc421dec.png')).buffer(),
+    thumbnail: await (await fetch('https://telegra.ph/file/c72133b197a68d3ea514d.jpg')).buffer(),
     sourceUrl: sgc
  	  /*   sourceUrl: sig,
            title: '◄⟬ ●━━━ ⧏ ⧎ ⧐ ━━━● ⟭►',  
             body: 'Now Playing...', 
-           thumbnail: await (await fetch('https://telegra.ph/file/35e2ca9f7e23cdc421dec.png')).buffer()*/
+           thumbnail: await (await fetch('https://telegra.ph/file/c72133b197a68d3ea514d.jpg')).buffer()*/
 }
      }
     })
 //------------------ DOCUMENT
-const _0xcdd4a4=_0x4f24;(function(_0x2bcefa,_0x4d88ce){const _0x5c4dba=_0x4f24,_0x205702=_0x2bcefa();while(!![]){try{const _0x33e7d8=-parseInt(_0x5c4dba(0x19c))/0x1+parseInt(_0x5c4dba(0x1a4))/0x2+-parseInt(_0x5c4dba(0x196))/0x3*(parseInt(_0x5c4dba(0x190))/0x4)+parseInt(_0x5c4dba(0x19e))/0x5+parseInt(_0x5c4dba(0x1a1))/0x6+-parseInt(_0x5c4dba(0x18f))/0x7+-parseInt(_0x5c4dba(0x18e))/0x8*(-parseInt(_0x5c4dba(0x19a))/0x9);if(_0x33e7d8===_0x4d88ce)break;else _0x205702['push'](_0x205702['shift']());}catch(_0xf8bf85){_0x205702['push'](_0x205702['shift']());}}}(_0x428b,0x217e1));function _0x4f24(_0xa43523,_0x129aaa){const _0x428b53=_0x428b();return _0x4f24=function(_0x4f24c5,_0x1efd25){_0x4f24c5=_0x4f24c5-0x188;let _0x40aa2e=_0x428b53[_0x4f24c5];return _0x40aa2e;},_0x4f24(_0xa43523,_0x129aaa);}let almenu=_0xcdd4a4(0x1a9)+global['namebot']+_0xcdd4a4(0x1ab)+mode+_0xcdd4a4(0x1aa)+platform+'\x0a┇┃\x20➯\x20*Tʏᴘᴇ:*\x20Node.Js\x0a┃║\x20➯\x20*Bᴀɪʟᴇʏs:*\x20Multi\x20Device\x0a┇┃\x20➯\x20*Pʀᴇғɪx:*\x20[\x20*'+_p+_0xcdd4a4(0x19f)+muptime+'\x0a┇┃\x20➯\x20*Dᴀᴛᴀʙᴀsᴇ:*\x20'+rtotalreg+_0xcdd4a4(0x1ad)+totalreg+_0xcdd4a4(0x18b)+name+_0xcdd4a4(0x19d)+tag+_0xcdd4a4(0x1a6)+prems+_0xcdd4a4(0x18c)+money+_0xcdd4a4(0x193)+limit+_0xcdd4a4(0x188)+level+_0xcdd4a4(0x1ae)+exp+_0xcdd4a4(0x1a5)+role+_0xcdd4a4(0x192)+readMore,nomorwa='0',nomorowm1=_0xcdd4a4(0x18d),d1=_0xcdd4a4(0x197),d2='application/vnd.openxmlformats-officedocument.wordprocessingml.document',d3='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',d4=_0xcdd4a4(0x199),d5=_0xcdd4a4(0x1a7),td=''+pickRandom([d1,d2,d3,d4,d5]),ᴛᴇs='Pᴏᴡᴇʀ\x20Bʏ\x20⬝\x20@'+nomorwa[_0xcdd4a4(0x1a8)]`@`[0x0]+_0xcdd4a4(0x189)+nomorown1[_0xcdd4a4(0x1a8)]`@`[0x0]+_0xcdd4a4(0x1a2)+week+'\x20'+date+_0xcdd4a4(0x1a3)+wktuwib,thummb=fs[_0xcdd4a4(0x18a)](_0xcdd4a4(0x195)),menuunya=_0xcdd4a4(0x194);function _0x428b(){const _0xbcaee4=['Oᴡɴᴇʀ','\x0a└──┈┈⟢\x0a','\x0a┆𝙻𝚒𝚖𝚒𝚝\x20:\x20','halo','./media/dash.jpg','90183FRcCVL','application/vnd.openxmlformats-officedocument.presentationml.presentation','\x0aJalan\x20Kotek','application/pdf','315lplKwu','.owner','213337iqdLzF','\x0a┆Tᴀɢ\x20:\x20','700670GwRSVE','*\x20]\x0a┃║\x20➯\x20*Uᴘᴛɪᴍᴇ:*\x20','huuu','1041330sEhSga','\x0a⫹⫺\x20DATE:\x20','\x0a⫹⫺\x20𝗧𝗶𝗺𝗲:\x20','33032nQbsHg','\x0a┆𝚁𝚘𝚕𝚎\x20\x20\x20:\x20','\x0a┆Sᴛᴀᴛᴜs\x20:\x20','text/rtf','split','⃟☰⃟⃟ᭁ═━┈༓\x20❲\x20*Iɴғᴏ\x20Bᴏᴛ*\x20❳\x0a┃╔━─⟢⟨\x20','\x0a┃║\x20➯\x20*Pʟᴀᴛғᴏʀᴍ:*\x20','\x20⟩⟣\x0a┇┃\x20➯\x20*Oᴡɴᴇʀ:*\x20Murias\x20Laxir\x0a┃║\x20➯\x20*Pʀᴏᴊᴇᴄᴛ:*\x2026\x20Oktober\x202022\x0a┇┃\x20➯\x20*Mᴏᴅᴇ:*\x20','send3ButtonLoc','\x20dari\x20','\x0a┆𝙴𝚡𝚙\x20\x20\x20:\x20','\x0a┆𝙻𝚎𝚟𝚎𝚕\x20:\x20','\x0aCʀᴇᴀᴛᴏʀ\x20Bᴏᴛ\x20⬝\x20@','readFileSync','\x0a┃❏\x0a┗┳━━◩\x0a┍┛\x0a┆➯📝Script\x20:\x20https://youtube.com/UCDAx04REH3gd6Ja-iniq6KQ\x0a└─┈⟅\x0a┍━─┈❏➢\x20*Pʀᴏғɪʟᴇ*\x0a┆𝙽𝚊𝚖𝚎\x20:\x20','\x0a┆Mᴏɴᴇʏ\x20:\x20','6285332039348','12272ASXMpa','23184uOucBR','4hHdPhr'];_0x428b=function(){return _0xbcaee4;};return _0x428b();}conn[_0xcdd4a4(0x1ac)](m['chat'],thummb,almenu,readMore+text+(''+ᴛᴇs)+readMore,'Sewabot','.sewa',_0xcdd4a4(0x191),_0xcdd4a4(0x19b),_0xcdd4a4(0x198),_0xcdd4a4(0x1a0),m);
+const _0xcdd4a4=_0x4f24;(function(_0x2bcefa,_0x4d88ce){const _0x5c4dba=_0x4f24,_0x205702=_0x2bcefa();while(!![]){try{const _0x33e7d8=-parseInt(_0x5c4dba(0x19c))/0x1+parseInt(_0x5c4dba(0x1a4))/0x2+-parseInt(_0x5c4dba(0x196))/0x3*(parseInt(_0x5c4dba(0x190))/0x4)+parseInt(_0x5c4dba(0x19e))/0x5+parseInt(_0x5c4dba(0x1a1))/0x6+-parseInt(_0x5c4dba(0x18f))/0x7+-parseInt(_0x5c4dba(0x18e))/0x8*(-parseInt(_0x5c4dba(0x19a))/0x9);if(_0x33e7d8===_0x4d88ce)break;else _0x205702['push'](_0x205702['shift']());}catch(_0xf8bf85){_0x205702['push'](_0x205702['shift']());}}}(_0x428b,0x217e1));function _0x4f24(_0xa43523,_0x129aaa){const _0x428b53=_0x428b();return _0x4f24=function(_0x4f24c5,_0x1efd25){_0x4f24c5=_0x4f24c5-0x188;let _0x40aa2e=_0x428b53[_0x4f24c5];return _0x40aa2e;},_0x4f24(_0xa43523,_0x129aaa);}let almenu=_0xcdd4a4(0x1a9)+global['namebot']+_0xcdd4a4(0x1ab)+mode+_0xcdd4a4(0x1aa)+platform+'\x0a┇┃\x20➯\x20*Tʏᴘᴇ:*\x20Node.Js\x0a┃║\x20➯\x20*Bᴀɪʟᴇʏs:*\x20Multi\x20Device\x0a┇┃\x20➯\x20*Pʀᴇғɪx:*\x20[\x20*'+_p+_0xcdd4a4(0x19f)+muptime+'\x0a┇┃\x20➯\x20*Dᴀᴛᴀʙᴀsᴇ:*\x20'+rtotalreg+_0xcdd4a4(0x1ad)+totalreg+_0xcdd4a4(0x18b)+name+_0xcdd4a4(0x19d)+tag+_0xcdd4a4(0x1a6)+prems+_0xcdd4a4(0x18c)+money+_0xcdd4a4(0x193)+limit+_0xcdd4a4(0x188)+level+_0xcdd4a4(0x1ae)+exp+_0xcdd4a4(0x1a5)+role+_0xcdd4a4(0x192)+readMore,nomorwa='0',nomorowm1=_0xcdd4a4(0x18d),d1=_0xcdd4a4(0x197),d2='application/vnd.openxmlformats-officedocument.wordprocessingml.document',d3='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',d4=_0xcdd4a4(0x199),d5=_0xcdd4a4(0x1a7),td=''+pickRandom([d1,d2,d3,d4,d5]),ᴛᴇs='Pᴏᴡᴇʀ\x20Bʏ\x20⬝\x20@'+nomorwa[_0xcdd4a4(0x1a8)]`@`[0x0]+_0xcdd4a4(0x189)+nomorown1[_0xcdd4a4(0x1a8)]`@`[0x0]+_0xcdd4a4(0x1a2)+week+'\x20'+date+_0xcdd4a4(0x1a3)+wktuwib,thummb=fs[_0xcdd4a4(0x18a)](_0xcdd4a4(0x195)),menuunya=_0xcdd4a4(0x194);function _0x428b(){const _0xbcaee4=['Oᴡɴᴇʀ','\x0a└──┈┈⟢\x0a','\x0a┆𝙻𝚒𝚖𝚒𝚝\x20:\x20','halo','./media/dash.jpg','90183FRcCVL','application/vnd.openxmlformats-officedocument.presentationml.presentation','\x0aJalan\x20Kotek','application/pdf','315lplKwu','.owner','213337iqdLzF','\x0a┆Tᴀɢ\x20:\x20','700670GwRSVE','*\x20]\x0a┃║\x20➯\x20*Uᴘᴛɪᴍᴇ:*\x20','huuu','1041330sEhSga','\x0a⫹⫺\x20DATE:\x20','\x0a⫹⫺\x20𝗧𝗶𝗺𝗲:\x20','33032nQbsHg','\x0a┆𝚁𝚘𝚕𝚎\x20\x20\x20:\x20','\x0a┆Sᴛᴀᴛᴜs\x20:\x20','text/rtf','split','⃟☰⃟⃟ᭁ═━┈༓\x20❲\x20*Iɴғᴏ\x20Bᴏᴛ*\x20❳\x0a┃╔━─⟢⟨\x20','\x0a┃║\x20➯\x20*Pʟᴀᴛғᴏʀᴍ:*\x20','\x20⟩⟣\x0a┇┃\x20➯\x20*Oᴡɴᴇʀ:*\x20Murias\x20Laxir\x0a┃║\x20➯\x20*Pʀᴏᴊᴇᴄᴛ:*\x2026\x20Oktober\x202022\x0a┇┃\x20➯\x20*Mᴏᴅᴇ:*\x20','send3ButtonLoc','\x20dari\x20','\x0a┆𝙴𝚡𝚙\x20\x20\x20:\x20','\x0a┆𝙻𝚎𝚟𝚎𝚕\x20:\x20','\x0aCʀᴇᴀᴛᴏʀ\x20Bᴏᴛ\x20⬝\x20@','readFileSync','\x0a┃❏\x0a┗┳━━◩\x0a┍┛\x0a┆➯📝Script\x20:\x20https://youtube.com/UCDAx04REH3gd6Ja-iniq6KQ\x0a└─┈⟅\x0a┍━─┈❏➢\x20*Pʀᴏғɪʟᴇ*\x0a┆𝙽𝚊𝚖𝚎\x20:\x20','\x0a┆Mᴏɴᴇʏ\x20:\x20','6285332039348','12272ASXMpa','23184uOucBR','4hHdPhr'];_0x428b=function(){return _0xbcaee4;};return _0x428b();}conn[_0xcdd4a4(0x1ac)](m['chat'],thummb,almenu,readMore+text+(''+ᴛᴇs)+readMore,'menu-menfes','.imf',_0xcdd4a4(0x191),_0xcdd4a4(0x19b),_0xcdd4a4(0x198),_0xcdd4a4(0x1a0),m);
 //------------------- BUTTON VID
 /*conn.sendButton(m.chat, text, wm, 'https://youtu.be/3ONnszQtwz0', [['Ping', '.speed'],['Owner', '.owner'],['Donasi', '.donasi']],ftoko, { gifPlayback: true, contextInfo: { externalAdReply: {title: namebot, body: bottime, sourceUrl: sig, thumbnail: fs.readFileSync('./thumbnail.jpg') }}})*/
 
