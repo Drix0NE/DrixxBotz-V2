@@ -280,7 +280,7 @@ let tek = `*${ucapan()} @${m.sender.split`@`[0]}*
 ┊⧠ *ʀᴏʟᴇ:* ${usrs.role}${usrs.premiumTime > 1 ? `
 ┗––––––––––––––––––✥
 ┊
-┊ ▸ *Sumber :* YouTube WH-MODS-DEV
+┊ ▸ *Sumber :* wa.me/6285332039348
 ┊ ▸ *ᴀᴜᴛʜᴏʀ :* ${nameown}
 ┴ ▸ *ᴏᴡɴᴇʀ :* ${nameown}
 ✧
