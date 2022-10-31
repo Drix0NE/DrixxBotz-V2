@@ -21,7 +21,7 @@ let res = await tiktokdlv3(args[0])
 ────────── ⇆ㅤ◁ㅤ ❚❚ㅤ ▷ㅤ↻ ──────────
 *Nickname:* ${nickname}
 *Description:* ${description}
-_©WH-MODS-BOT-V1🍭_
+_©𝔻𝕣𝕚𝕩𝕩𝔹𝕠𝕥𝕫🍭_
 `.trim(), m)
 }
 handler.help = ['ttkbocilteam3'].map(v => v + ' <url>')
