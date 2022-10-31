@@ -177,6 +177,9 @@ if (teks == 'owner') tags = {
 if (teks == 'nocategory') tags = {
 '': 'No Category'
 }
+if (teks == 'Menu-Menfess') tags = {
+    'imf': 'imf'
+}
 try {
 // DEFAULT MENU
 let dash = global.dashmenu
@@ -211,15 +214,9 @@ title: `${htki} MAIN ${htka}`,
 rows: [
 {title: `⚡ ${emot} SPEED BOT`, rowId: ".speed", description: "Menampilkan kecepatan respon BOT"},
 {title: `💌 ${emot} OWNER BOT`, rowId: ".owner", description: "Menampilkan List owner BOT"},
-{title: `⏰ ${pmenus} RUNTIME BOT`, rowId: ".runtime", description: "𝙼𝚎𝚗𝚊𝚖𝚙𝚒𝚕𝚔𝚊𝚗 Waktu Bot Berjalan"}, 
-
+{title: `💌 ${emot} MENU MENFESS`, rowId: ".imf", description: "Menampilkan Menu Menfess"},
 {title: `📔 ${emot} SCRIPT BOT`, rowId: ".sc", description: `Source Code ${namebot}`},
 ]
-},{
-    title: `${htki} MENU MENFESS ${htka}`,
-    rows: [
-      {title: `💬 ${pmenus} Menfess Balas`, rowId: ".? menbalas", description: "Menampilkan Semua command BOT"},
-    ]},{
 },{
 title: `${htki} SUPPORT ${htka}`,
 rows: [
@@ -254,6 +251,7 @@ rows: [
 {title: `${emot} Database`, rowId: ".? database", description: "Simpan sesuatu diBOT"},
 {title: `${emot} Tools`, rowId: ".? tools", description: "Mungkin tools ini bisa membantu?"},
 {title: `${emot} Owner`, rowId: ".? owner", description: "Owner Only!"},
+{title: `${emot} Menu Menfess`, rowId: ".imf", description: "Menfes Only!"},
 {title: `\n${emot} No Category`, rowId: ".? nocategory", description: "Fitur tanpa kategory!"},
 ] },
 ]
@@ -279,14 +277,6 @@ let tek = `*${ucapan()} @${m.sender.split`@`[0]}*
 ┊⧠ *ʟᴇᴠᴇʟ:* ${usrs.level}
 ┊⧠ *ʀᴏʟᴇ:* ${usrs.role}${usrs.premiumTime > 1 ? `
 ┗––––––––––––––––––✥
-┊
-┊ ▸ *Sumber :* wa.me/6285332039348
-┊ ▸ *ᴀᴜᴛʜᴏʀ :* ${nameown}
-┴ ▸ *ᴏᴡɴᴇʀ :* ${nameown}
-✧
-┬ 📌 𝗣𝗶𝗻𝗻𝗲𝗱 :
-┊ ʙᴇʀɪ ᴊᴇᴅᴀ ʏᴀʜ ᴋᴀᴋ ^ω
-┊––––––––––––––––––✥
 ┊↬✗• *ᴇxᴘɪʀᴇᴅ ᴘʀᴇᴍɪᴜᴍ:*
 ${clockStringP(usrs.premiumTime - new Date())}` : ''}
 `

@@ -109,8 +109,6 @@ let but2= ('𒆜List Menu𒆜')
 let id2 = '.tesm'
 let but3 = ('Sewabot') 
 let id3 = '.sewa'
-let but4 = ('Menu Menfess')
-let id4  = '.imf'
 let konten = (`*${ucapan()}, ${tag} 👋*, ${kata}`)
 let knnt = `
 *『 ɪɴᴛʀᴏᴅᴜᴄᴛɪᴏɴ 』* 
