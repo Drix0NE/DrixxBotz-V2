@@ -1,4 +1,4 @@
-/* import fetch from 'node-fetch'
+import fetch from 'node-fetch'
 
 let handler = async (m, { conn }) => {
   let res = await fetch(global.API('LeysCoder', '/api/ppcouple', {}, 'apikey'))
@@ -9,8 +9,8 @@ let handler = async (m, { conn }) => {
   await conn.sendFile(m.chat, json.result.female, '', 'Dan Ni PP YgCewe', m)
 }
 handler.help = ['ppcouple', 'ppcp']
-handler.tags = ['internet']
+handler.tags = ['internet', 'limitmenu']
 handler.command = /^(pp(cp|couple))$/i
 handler.limit = true
 
-export default handler */
+export default handler
