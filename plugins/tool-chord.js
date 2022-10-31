@@ -11,7 +11,7 @@ let handler = async(m, { conn, text, usedPrefix }) => {
         .catch(_ => m.reply('Chord Lagu Tidak Ditemukan!'))
 }
 handler.help = ['chord <judul lagu>']
-handler.tags = ['tools']
+handler.tags = ['tools', 'limitmenu']
 handler.command = /^(chord)$/i
 handler.limit = true
 

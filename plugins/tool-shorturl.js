@@ -57,7 +57,7 @@ if (args[1] == "ouo") {
 	}
 }
 handler.help = ['short <url> <type>']
-handler.tags = ['internet']
+handler.tags = ['internet', 'limitmenu']
 handler.command = /^(short(url)?)$/i
 handler.limit = true
 export default handler
