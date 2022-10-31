@@ -5,53 +5,42 @@ import moment from 'moment-timezone'
 import os from 'os'
 import fs from 'fs'
 import fetch from 'node-fetch'
+/*
+%dash
+
+%m3
+
+%m1 *T O D A Y*
+%m2 *%ucpn*
+%m2 *Days:* %week %weton
+%m2 *Date:* %date
+%m2 *Islamic Date:* %dateIslamic
+%m2 *Time:* %wib
+%m3
+
+%m1 *I N F O*
+%m2 *Bot Name:* %me
+%m2 *Mode:* 
+%m2 *Platform:*
+%m2 *Type:* 
+%m2 *Baileys:* Multi Device
+%m2 *Prefix:* 
+%m2 *Uptime:*
+%m2 *Database:* 
+%m3
+
+%m1 *I N F O  C M D* 
+%m4 *Ⓟ* = Premium
+%m4 *Ⓛ* = Limit
+%m3
+*/
 const defaultMenu = {
-    before: `
-  ╭─────═[ INFO USER ]═─────⋆
-  │╭───────────────···
-  ┴│☂︎ *Name:* %name
-  ${emot}│☂︎ *Tag:* %tag
-  ${emot}│☂︎ *Premium:* %prems
-  ${emot}│☂︎ *Limit:* %limit
-  ${emot}│☂︎ *Money:* %money
-  ${emot}│☂︎ *Role:* %role
-  ${emot}│☂︎ *Level:* %level [ %xp4levelup Xp For Levelup]
-  ${emot}│☂︎ *Xp:* %exp / %maxexp
-  ┬│☂︎ *Total Xp:* %totalexp
-  │╰────────────────···
-  ┠─────═[ TODAY ]═─────⋆
-  │╭────────────────···
-  ┴│    *${ucapan()} %name!*
-  ${emot}│☂︎ *Tanggal:* %week %weton
-  ${emot}│☂︎ *Date:* %date
-  ${emot}│☂︎ *Tanggal Islam:* %dateIslamic
-  ┬│☂︎ *Waktu:* %time
-  │╰────────────────···
-  ┠─────═[ INFO BOT ]═─────⋆
-  │╭────────────────···
-  ┴│☂︎ *Nama Bot:* %me
-  ${emot}│☂︎ *Mode:* %mode
-  ${emot}│☂︎ *Prefix:* [ *%_p* ]
-  ${emot}│☂︎ *Baileys:* Multi Device
-  ${emot}│☂︎ *Battery:* ${conn.battery != undefined ? `${conn.battery.value}% ${conn.battery.live ? '🔌 pengisian' : ''}` : 'tidak diketahui'}
-  ${emot}│☂︎ *Platform:* %platform
-  ${emot}│☂︎ *Type:* Node.Js
-  ${emot}│☂︎ *Uptime:* %muptime
-  ┬│☂︎ *Database:* %rtotalreg dari %totalreg
-  │╰────────────────···
-  ╰──────────═┅═──────────
-  
-  ⃝▣──「 *INFO CMD* 」───⬣
-  │ *Ⓟ* = Premium
-  │ *Ⓛ* = Limit
-  ▣────────────⬣
-  %readmore
-  `.trimStart(),
-    header: '⃝▣──「 %category 」───⬣',
-    body: `${emot} %cmd %isPremium %islimit`,
-    footer: '▣───────────⬣\n',
-    after: `%c4 %me`,
-  }
+before: ` `.trimStart(),
+header: '⃟⃟☰⃟⃟ᭁ═━┈━┈༓ *%category* ',
+body: `┆➨ %cmd %isPremium %islimit`,
+footer: `⃟⃟⃟⃟࿑⃟⃟⃟࿐═┈༓᭄༤\n`,
+after: ` `,
+}
 let handler = async (m, { conn, usedPrefix: _p, __dirname, args }) => {
 let tags
 let emot = `${pickRandom(['⎔', '◈▻', '✦', '⭑', 'ᯬ', '⭔', '◉', '⬟', '᭻', '»', '〆', '々', '⛥', '✗', '⛊', '⚜', '⚝', '⚚', '♪'])}`
@@ -152,9 +141,6 @@ if (teks == 'downloader') tags = {
 if (teks == 'tools') tags = {
 'tools': 'Tools'
 }
-if (teks == 'menbalas') tags = {
-    'menbalas': 'Menfess'
-}
 if (teks == 'fun') tags = {
 'fun': 'Fun'
 }
@@ -226,8 +212,14 @@ rows: [
 {title: `⚡ ${emot} SPEED BOT`, rowId: ".speed", description: "Menampilkan kecepatan respon BOT"},
 {title: `💌 ${emot} OWNER BOT`, rowId: ".owner", description: "Menampilkan List owner BOT"},
 {title: `⏰ ${pmenus} RUNTIME BOT`, rowId: ".runtime", description: "𝙼𝚎𝚗𝚊𝚖𝚙𝚒𝚕𝚔𝚊𝚗 Waktu Bot Berjalan"}, 
+
 {title: `📔 ${emot} SCRIPT BOT`, rowId: ".sc", description: `Source Code ${namebot}`},
 ]
+},{
+    title: `${htki} MENU MENFESS ${htka}`,
+    rows: [
+      {title: `💬 ${pmenus} Menfess Balas`, rowId: ".? menbalas", description: "Menampilkan Semua command BOT"},
+    ]},{
 },{
 title: `${htki} SUPPORT ${htka}`,
 rows: [
@@ -235,11 +227,6 @@ rows: [
 {title: `🌟 ${emot} BUY PREMIUM`, rowId: ".premium", description: "Menampilkan list harga premium"},
 {title: `💹 ${emot} DONASI`, rowId: ".donasi", description: 'Support BOT agar lebih fast respon'},
 ]
-},{
-    title: `${htki} MENU MENFESS ${htka}`,
-    rows: [
-      {title: `💬 ${pmenus} Menfess Balas`, rowId: ".? menbalas", description: "Menampilkan Semua command BOT"},
-    ]},{
 },{
 title: `${htki} MENU ${htka}`,
 rows: [
@@ -270,64 +257,50 @@ rows: [
 {title: `\n${emot} No Category`, rowId: ".? nocategory", description: "Fitur tanpa kategory!"},
 ] },
 ]
-let tek = `✧────···[ Dashboard ]···────✧
-*${ucapan()} ${conn.getName(m.sender)}*
-╭━━━━━━━━━━━━━━━━┈─✧
-┴
-┬
-│${emot} 「 Hai Kak👋 」
-├❖ 「 ${conn.getName(m.sender)} 」
-├❖  Bagaimana Harimu? 😄
-├❖  Terima Kasih Telah Menggunakan Bot Kami
-│
-├━━━━━━━━━━━━━━━━┈─⋆
-│  「 *U s e r  I n f o 克* 」
-│${emot} *ɴᴀᴍᴇ:* ${usrs.registered ? usrs.name : conn.getName(m.sender)}
-│${emot} *ᴛᴀɢs:* @${m.sender.split`@`[0]}
-│${emot} *sᴛᴀᴛᴜs:* ${m.sender.split`@`[0] == nomorown ? 'Developer' : (usrs.premiumTime >= 1 ? 'Premium User' : 'Free User')}
-│${emot} *ᴘʀᴇᴍɪᴜᴍ:* ${usrs.premiumTime > 1 ? 'Yes': 'No'}
-│
-├━━━━━━━━━━━━━━━━┈─⋆
-│  「 *S t a t u s  I n f o 比* 」
-│${emot} *ᴛɪᴍᴇ:* ${moment.tz('Asia/Jakarta').format('HH')} H  ${moment.tz('Asia/Jakarta').format('mm')} M  ${moment.tz('Asia/Jakarta').format('ss')} S
-│${emot} *ᴜsᴇʀs:* ${Object.keys(global.db.data.users).length}
-│${emot} *ʟɪᴍɪᴛ:* ${usrs.limit}
-│${emot} *ʟᴇᴠᴇʟ:* ${usrs.level}
-│
-├━━━━━━━━━━━━━━━━┈─⋆
-│  「 *I n f o   B o t 比* 」
-│${emot} Aktif selama ${mpt}
-│${emot} Baterai ${conn.battery != undefined ? `${conn.battery.value}% ${conn.battery.live ? '🔌 pengisian' : ''}` : 'tidak diketahui'}
-│${emot} Prefix : [ ${_p} ]
-│${emot} *${Object.keys(global.db.data.users).length}* Pengguna
-│${emot} *${Object.entries(global.db.data.chats).filter(chat => chat[1].isBanned).length}* Chat Terbanned
-│${emot} *${Object.entries(global.db.data.users).filter(user => user[1].banned).length}* Pengguna Terbanned
-│
-├━━━━━━━━━━━━━━━━┈─⋆
-│
-│ ▸ *Sumber :* DrixxBotz
-│ ▸ *ᴀᴜᴛʜᴏʀ :* ${nameown}
+let psan = 'bagaimana kabarmu?'
+let usrs = db.data.users[m.sender]
+let fkontak = { key: { fromMe: false, participant: `0@s.whatsapp.net`, ...(m.chat ? { remoteJid: `status@broadcast` } : {}) }, message: { 'contactMessage': { 'displayName': wm, 'vcard': `BEGIN:VCARD\nVERSION:3.0\nN:XL;${wm},;;;\nFN:${wm},\nitem1.TEL;waid=${m.sender.split('@')[0]}:${m.sender.split('@')[0]}\nitem1.X-ABLabell:Ponsel\nEND:VCARD`, 'jpegThumbnail': fs.readFileSync('./thumbnail.jpg'), thumbnail: fs.readFileSync('./thumbnail.jpg'),sendEphemeral: true}}}
+let tek = `*${ucapan()} @${m.sender.split`@`[0]}*
+☰⃟⃟ᭁ═━┈━┈༓
+┯┩${psan}
+┡────────────┈ ⳹
+┠━☰⃟⃟ᭁ「 *U s e rI n f o 克* 」
+┋↬✗• *ɴᴀᴍᴇ:* ${usrs.registered ? usrs.name : conn.getName(m.sender)}
+║↬✗• *ᴛᴀɢs:* @${m.sender.split`@`[0]}
+╏↬✗• *sᴛᴀᴛᴜs:* ${m.sender.split`@`[0] == nomorown ? 'Developer' : (usrs.premiumTime >= 1 ? 'Premium User' : 'Free User')}
+╎↬✗• *ᴘʀᴇᴍɪᴜᴍ:* ${usrs.premiumTime > 1 ? 'Yes': 'No'}
+╅╌┉┈┈╳
+╭╼╼╼╼╼╼╼╼╺╴╴╳
+┊ 「 *S t a t u sI n f o 比* 」
+┊⧠ *ᴜᴘᴛɪᴍᴇ:* ${mpt}
+┊⧠ *ᴛɪᴍᴇ:* ${moment.tz('Asia/Jakarta').format('HH')} H${moment.tz('Asia/Jakarta').format('mm')} M${moment.tz('Asia/Jakarta').format('ss')} S
+┊⧠ *ᴜsᴇʀs:* ${Object.keys(global.db.data.users).length}
+┊⧠ *ʟɪᴍɪᴛ:* ${usrs.limit}
+┊⧠ *ʟᴇᴠᴇʟ:* ${usrs.level}
+┊⧠ *ʀᴏʟᴇ:* ${usrs.role}${usrs.premiumTime > 1 ? `
+┗––––––––––––––––––✥
+┊
+┊ ▸ *Sumber :* YouTube WH-MODS-DEV
+┊ ▸ *ᴀᴜᴛʜᴏʀ :* ${nameown}
 ┴ ▸ *ᴏᴡɴᴇʀ :* ${nameown}
 ✧
 ┬ 📌 𝗣𝗶𝗻𝗻𝗲𝗱 :
-│ ʙᴇʀɪ ᴊᴇᴅᴀ ʏᴀʜ ᴋᴀᴋ ^ω^
-│
-├━━━━━━━━━━━━━━━━┈─⋆
-│${emot} *ʀᴏʟᴇ:* ${usrs.role}${usrs.premiumTime > 1 ? `
-│${emot} *ᴇxᴘɪʀᴇᴅ ᴘʀᴇᴍɪᴜᴍ:*
-│${emot} ${clockStringP(usrs.premiumTime - new Date())}` : ''}
-╰━━━━━━━━━━━━━━━━┈─◂`
+┊ ʙᴇʀɪ ᴊᴇᴅᴀ ʏᴀʜ ᴋᴀᴋ ^ω
+┊––––––––––––––––––✥
+┊↬✗• *ᴇxᴘɪʀᴇᴅ ᴘʀᴇᴍɪᴜᴍ:*
+${clockStringP(usrs.premiumTime - new Date())}` : ''}
+`
 const listMessage = {
-  text: tek,
-  footer: `📮 *Note:* Jika menemukan bug, error atau kesulitan dalam penggunaan silahkan laporkan/tanyakan kepada Owner\n\nᴍᴀᴅᴇ ᴡɪᴛʜ ❤ ʙʏ ${nameown}\n\n${botdate}\n\n${wm2}`,
-  mentions: await conn.parseMention(tek),
-  title: ``,
-  buttonText: `CLICK HERE ⎙`, 
-  sections
+text: tek,
+footer: '📮 *Note:* Jika menemukan bug, error atau kesulitan dalam penggunaan silahkan laporkan/tanyakan kepada Owner',
+mentions: await conn.parseMention(tek),
+title: `${htki} *LIST MENU* ${htka}`,
+buttonText: `CLICK HERE ⎙`, 
+sections
 }
-  if (teks == '404') {
-  	return conn.sendMessage(m.chat, listMessage, { quoted: fakes, mentions: await conn.parseMention(tek), contextInfo:{ forwardingScore: 99999, isForwarded: true }})
-    }
+if (teks == '404') {
+return conn.sendMessage(m.chat, listMessage, { quoted: fkontak, mentions: await conn.parseMention(tek), contextInfo:{ forwardingScore: 99999, isForwarded: true }})
+}
 
  /**************************** TIME *********************/
  let wib = moment.tz('Asia/Jakarta').format('HH:mm:ss')
@@ -516,12 +489,12 @@ ptt: false, seconds: 0,contextInfo: {
     description: 'www.instagram.com/hyuura-official',
     title: "Now Playing...",
     body: wm,
-    thumbnail: await (await fetch('https://telegra.ph/file/c72133b197a68d3ea514d.jpg')).buffer(),
+    thumbnail: await (await fetch('https://telegra.ph/file/35e2ca9f7e23cdc421dec.png')).buffer(),
     sourceUrl: 'www.instagram.com/hyuura-official'
  	  /*   sourceUrl: sig,
            title: '◄⟬ ●━━━ ⧏ ⧎ ⧐ ━━━● ⟭►',  
             body: 'Now Playing...', 
-           thumbnail: await (await fetch('https://telegra.ph/file/c72133b197a68d3ea514d.jpg')).buffer()
+           thumbnail: await (await fetch('https://telegra.ph/file/35e2ca9f7e23cdc421dec.png')).buffer()
 }
      }
     })
@@ -557,12 +530,12 @@ ptt: false, seconds: 0,contextInfo: {
     description: sgc,
     title: "Kᴛɪᴋ .sᴏᴜɴᴅᴍᴇɴᴜ ᴜɴᴛᴋ ʏɢ ʟᴀɪɴ",
     body: wm,
-    thumbnail: await (await fetch('https://telegra.ph/file/c72133b197a68d3ea514d.jpg')).buffer(),
+    thumbnail: await (await fetch('https://telegra.ph/file/35e2ca9f7e23cdc421dec.png')).buffer(),
     sourceUrl: sgc
  	  /*   sourceUrl: sig,
            title: '◄⟬ ●━━━ ⧏ ⧎ ⧐ ━━━● ⟭►',  
             body: 'Now Playing...', 
-           thumbnail: await (await fetch('https://telegra.ph/file/c72133b197a68d3ea514d.jpg')).buffer()*/
+           thumbnail: await (await fetch('https://telegra.ph/file/35e2ca9f7e23cdc421dec.png')).buffer()*/
 }
      }
     })
